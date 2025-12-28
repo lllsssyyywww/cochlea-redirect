@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cochlea - 请用浏览器打开</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .tip-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: #555;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 10px 0;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+        }
+        
+        .qr-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .tip-box {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">👂</div>
+        <h1>Cochlea - 听觉实验平台</h1>
+        <p style="color: #666; margin-bottom: 20px;">微信内访问受限，请按以下步骤操作</p>
+        
+        <div class="tip-box">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>点击右上角 <strong>•••</strong> 或 <strong>⋮</strong></div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>选择<strong>"在浏览器中打开"</strong></div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>或在下方<strong>复制链接</strong>到浏览器</div>
+            </div>
+        </div>
+        
+        <button class="btn" id="openBtn">一键尝试跳转浏览器</button>
+        
+        <div class="qr-section">
+            <p style="margin-bottom: 15px; color: #666;">备用方案：扫描二维码用手机浏览器打开</p>
+            <div class="qr-code" id="qrcode"></div>
+            <p style="font-size: 14px; color: #888; margin-top: 10px;">或保存二维码图片后扫描</p>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn secondary" id="copyBtn">复制链接地址</button>
+                <a href="https://cochlea.pages.dev" class="btn" id="directBtn">直接访问（非微信）</a>
+            </div>
+        </div>
+        
+        <p style="margin-top: 30px; color: #999; font-size: 14px;">
+            项目地址：cochlea.pages.dev<br>
+            期末作业项目 - 听觉实验平台
+        </p>
+    </div>
+
+    <!-- QR Code 生成库 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <script>
+        const targetUrl = 'https://cochlea.pages.dev';
+        
+        // 检测是否微信
+        function isWeChat() {
+            return /MicroMessenger/i.test(navigator.userAgent);
+        }
+        
+        // 生成二维码
+        function generateQRCode() {
+            if (typeof QRCode !== 'undefined') {
+                new QRCode(document.getElementById("qrcode"), {
+                    text: targetUrl,
+                    width: 180,
+                    height: 180,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }
+        }
+        
+        // 尝试跳转外部浏览器
+        document.getElementById('openBtn').addEventListener('click', function() {
+            if (isWeChat()) {
+                // 微信环境：尝试唤起外部浏览器
+                window.location.href = 'weixin://dl/browser/?url=' + encodeURIComponent(targetUrl);
+                
+                // 3秒后显示手动提示
+                setTimeout(function() {
+                    alert('如果未能自动跳转，请按照上方提示手动操作');
+                }, 3000);
+            } else {
+                // 非微信环境直接跳转
+                window.location.href = targetUrl;
+            }
+        });
+        
+        // 复制链接
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            navigator.clipboard.writeText(targetUrl).then(function() {
+                alert('✅ 链接已复制！\n请粘贴到手机浏览器中打开');
+            }).catch(function() {
+                // 兼容性回退
+                const textarea = document.createElement('textarea');
+                textarea.value = targetUrl;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ 链接已复制！\n请粘贴到浏览器中打开');
+            });
+        });
+        
+        // 直接访问按钮
+        document.getElementById('directBtn').addEventListener('click', function(e) {
+            if (isWeChat()) {
+                e.preventDefault();
+                alert('检测到微信环境，请使用上方方法跳转');
+            }
+        });
+        
+        // 页面加载时操作
+        window.onload = function() {
+            generateQRCode();
+            
+            // 如果是微信，显示提醒
+            if (isWeChat()) {
+                console.log('微信环境检测，显示跳转提示');
+            }
+        };
+    </script>
+</body>
+</html>
